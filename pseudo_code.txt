@@ -1,0 +1,238 @@
+models = [
+    Passenger Model --> takes passenger variation, passenger locations and outputs passenger count
+    Daily Variation Model --> outputs passenger or congestion variation
+    Ghost Plane Model --> takes congestion variation and outputs congestion
+    Maintenance Model --> takes flight time and outputs grounding
+    Delay Cost Model --> takes delay time and compensation and passenger relocation
+    Loading Model --> takes cleaning time and outputs turnaround time
+    Brand Model --> outputs co-operation, compensation, cleaning time
+
+]
+
+
+For each scenario:
+    For each realization:
+        while currentTime < endTime:
+
+             # Daily Variation Model #
+             Evaluate (Daily Variation Model):
+                Check (Time of Day)
+                    Update (Passenger Variation)
+                    Update (Congestion Variation)
+
+            # Ghost Plane Model #
+            For airport in airports:
+                Evaluation (Ghost Plane Model):
+                    Check ()
+
+
+FOR airplane in airplanes:
+    If airplane is still in MAINTENANCE, skip flight checks
+111         IF airplaneAgent.status == "MAINTENANCE":
+112             CHECK(maintenanceModel.repairComplete(airplaneAgent, currentTime))
+113             IF true:
+114                 UPDATE(airplaneAgent.status) = "READY"
+115             CONTINUE // move on to next plane
+
+116         // (I2) If plane is READY and it's time to depart
+117         IF airplaneAgent.status == "READY" 
+              AND currentTime >= airplaneAgent.goalDepartureTime:
+118             CHECK(airportCanGrantDeparture(airplaneAgent.location, airplaneAgent))
+119             IF true:
+120                 airplaneAgent.leaveForDestination()
+                     // e.g., sets airplaneAgent.status = "FLYING"
+                     // sets airplaneAgent.goalArrivalTime 
+                     //    = currentTime + travelTime(distance)
+121             ELSE:
+122                 airplaneAgent.delaySelf()
+                     UPDATE(airplaneAgent.goalDepartureTime)
+                         = currentTime + brandModel.delayIncrement(...)
+
+123         // (I3) If plane is FLYING and arrival time is reached
+124         IF airplaneAgent.status == "FLYING" 
+              AND currentTime >= airplaneAgent.goalArrivalTime:
+125             UPDATE(airplaneAgent.status) = "ARRIVED"
+126             UPDATE(airplaneAgent.location) = airplaneAgent.destination
+127             // Now apply turnaround from (H)
+128             newTurnaround = airplaneAgent.turnaroundTime + airportAgent.bufferTime
+129             UPDATE(airplaneAgent.goalDepartureTime) = currentTime + newTurnaround
+130             UPDATE(airplaneAgent.status) = "READY"
+
+131         // (I4) Update loadPercent based on passenger changes
+132         CHECK(passengerUpdate or passengerModel.getLoadFactorUpdate(airplaneAgent))
+133         UPDATE(airplaneAgent.loadPercent)
+
+134         // (I5) Track activeTimePercent if plane is not grounded
+135         IF airplaneAgent.status in ["READY", "FLYING", "ARRIVED"]:
+136             UPDATE(airplaneAgent.activeTimePercent)
+                 = functionOfCurrentUtilization(...)
+
+
+
+
+
+
+
+37  WHILE currentTime < endTime:
+
+38      //====================
+39      // (A) DAILY VARIATION
+40      //====================
+41      EVALUATE(dailyVariationModel)
+42          CHECK(dailyVariationModel.timeOfDayFactor(currentTime))
+43          UPDATE(globalDailyFactor) = dailyVariationModel.getDailyFactor(...)
+              // e.g., modifies typical traffic pattern or passenger flow
+44      
+45      //====================
+46      // (B) GHOST PLANE MODEL
+47      //====================
+48      EVALUATE(ghostPlaneModel)
+49          CHECK(ghostPlaneModel.ghostArrivals(currentTime))
+50          UPDATE(ghostCongestionImpact) = ghostPlaneModel.calculateExtraCongestion(...)
+
+51      //====================
+52      // (C) PASSENGER MODEL
+53      //====================
+54      EVALUATE(passengerModel)
+55          CHECK(passengerModel.passengerFlow(currentTime, globalDailyFactor))
+56          UPDATE(passengerUpdate) = passengerModel.getPassengerChanges()
+              // e.g., new passengers, drop-offs, reassignments
+
+57      //======================================
+58      // (D) APPLY DAILY + GHOST UPDATES TO AIRPORTS
+59      //======================================
+60      FOR each airportAgent in airportAgents:
+61          // Incorporate daily variation + ghost flights into congestion
+62          UPDATE(airportAgent.congestion) 
+              = function of (airportAgent.congestion, globalDailyFactor, ghostCongestionImpact)
+63          // Possibly use pdfOfDelay to add random delays or reduce capacity
+64          CHECK(airportAgent.pdfOfDelay)
+65          UPDATE(airportAgent.congestion) 
+              += airportAgent.applyPDFofDelay(...)
+
+66          // Some airports might have capacity management logic here
+67          // (We do a more detailed step below in (G).)
+
+68      //====================
+69      // (E) MAINTENANCE MODEL
+70      //====================
+71      EVALUATE(maintenanceModel)
+72          FOR each airplaneAgent in airplaneAgents:
+73              CHECK(maintenanceModel.isMaintenanceDue(airplaneAgent, currentTime))
+74              IF true:
+75                  UPDATE(airplaneAgent.status) = "MAINTENANCE"
+76                  UPDATE(airplaneAgent.goalDepartureTime) 
+                      = currentTime + maintenanceModel.getRepairTime(airplaneAgent)
+
+77      //====================
+78      // (F) BRAND MODEL
+79      //====================
+80      EVALUATE(brandModel)
+81          FOR each airplaneAgent in airplaneAgents:
+82              CHECK(brandModel.cooperationRules(airplaneAgent))
+83              UPDATE(airplaneAgent.brandDecision) 
+                  = brandModel.makeDecision(...)
+
+84      //====================
+85      // (G) AIRPORT CAPACITY MGMT
+86      //====================
+87      FOR each airportAgent in airportAgents:
+88          // Delays or restrict arrivals if capacity is exceeded
+89          IF airportAgent.congestion > airportAgent.airspaceCapacity:
+90              airportAgent.delayDepartures()
+                  // e.g., instruct local planes to Update(goalDepartureTime)
+
+91          CHECK(airportAgent.runwayCapacityLarge, airportAgent.runwayCapacitySmall)
+92          IF runwaysFull:
+93              airportAgent.restrictArrivals()
+                  // e.g., incoming planes must circle or be diverted
+
+94          IF airportAgent.storageCapacityExceeded():
+95              airportAgent.redirectPlanes()
+                  // forcibly change plane destinations if needed
+
+96          IF airportAgent.hasCancelledFlights():
+97              airportAgent.movePassengers()
+                  // reassign passengerUpdate or call passengerModel to shift them
+
+98      //====================
+99      // (H) LOADING MODEL
+100     //====================
+101     EVALUATE(loadingModel)
+102         FOR each airplaneAgent in airplaneAgents:
+103             CHECK(loadingModel.calculateBoardingTime(airplaneAgent))
+104             UPDATE(airplaneAgent.turnaroundTime)
+                 = loadingModel.calculateTurnaroundTime(airplaneAgent.brand, 
+                                                      airplaneAgent.loadPercent)
+105             // Possibly incorporate brand-specific cleaning times or cooperation rules
+
+106     //====================
+107     // (I) AIRPLANE LOGIC
+108     //====================
+109     FOR each airplaneAgent in airplaneAgents:
+
+110         // (I1) If plane is still in MAINTENANCE, skip flight checks
+111         IF airplaneAgent.status == "MAINTENANCE":
+112             CHECK(maintenanceModel.repairComplete(airplaneAgent, currentTime))
+113             IF true:
+114                 UPDATE(airplaneAgent.status) = "READY"
+115             CONTINUE // move on to next plane
+
+116         // (I2) If plane is READY and it's time to depart
+117         IF airplaneAgent.status == "READY" 
+              AND currentTime >= airplaneAgent.goalDepartureTime:
+118             CHECK(airportCanGrantDeparture(airplaneAgent.location, airplaneAgent))
+119             IF true:
+120                 airplaneAgent.leaveForDestination()
+                     // e.g., sets airplaneAgent.status = "FLYING"
+                     // sets airplaneAgent.goalArrivalTime 
+                     //    = currentTime + travelTime(distance)
+121             ELSE:
+122                 airplaneAgent.delaySelf()
+                     UPDATE(airplaneAgent.goalDepartureTime)
+                         = currentTime + brandModel.delayIncrement(...)
+
+123         // (I3) If plane is FLYING and arrival time is reached
+124         IF airplaneAgent.status == "FLYING" 
+              AND currentTime >= airplaneAgent.goalArrivalTime:
+125             UPDATE(airplaneAgent.status) = "ARRIVED"
+126             UPDATE(airplaneAgent.location) = airplaneAgent.destination
+127             // Now apply turnaround from (H)
+128             newTurnaround = airplaneAgent.turnaroundTime + airportAgent.bufferTime
+129             UPDATE(airplaneAgent.goalDepartureTime) = currentTime + newTurnaround
+130             UPDATE(airplaneAgent.status) = "READY"
+
+131         // (I4) Update loadPercent based on passenger changes
+132         CHECK(passengerUpdate or passengerModel.getLoadFactorUpdate(airplaneAgent))
+133         UPDATE(airplaneAgent.loadPercent)
+
+134         // (I5) Track activeTimePercent if plane is not grounded
+135         IF airplaneAgent.status in ["READY", "FLYING", "ARRIVED"]:
+136             UPDATE(airplaneAgent.activeTimePercent)
+                 = functionOfCurrentUtilization(...)
+
+137     //====================
+138     // (J) DELAY COST MODEL
+139     //====================
+140     EVALUATE(delayCostModel)
+141         FOR each airplaneAgent in airplaneAgents:
+142             CHECK(delayCostModel.calcDelay(airplaneAgent, currentTime))
+143             UPDATE(delayCostModel.accumulatedCosts)
+                 += delayCostModel.calculateCompensation(...)
+
+144     //====================
+145     // (K) INCREMENT TIME
+146     //====================
+147     UPDATE(currentTime) = currentTime + timeStep
+
+
+
+For each airport
+
+	update actual numbers of passengers at the airport
+	update how many available spots there for planes
+
+	Accounted for any delays for airports and delays
+
+	Now we evaluate airport agents. 
+

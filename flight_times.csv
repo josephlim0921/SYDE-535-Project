@@ -1,0 +1,7 @@
+﻿start_destination,end_destination,avg_time
+Toronto,Vancouver,320
+Vancouver,Toronto,280
+Montreal,Toronto,90
+Toronto,Montreal,75
+Montreal,Vancouver,350
+Vancouver,Montreal,280
