@@ -5,10 +5,10 @@
 Flight times between various destinations
 
 ### ground_delay.py
-Code for Delay caused by ground services
+Code for delay caused by ground services
 
 ### max_capabilities.py
-Capcities of airline flights and percentage of each aircraft
+Capacities of airline flights and percentage of each aircraft
 
 ### max_capacity - YUL_capacity.csv
 Hourly passenger variation for YUL airport
@@ -20,7 +20,7 @@ Hourly passenger variation for YVR airport
 Hourly passenger variation for YYZ airport
 
 ### simulation_final_fixed.ipynb
-Main code with classes fir airplane and airport agents and to run the realizations
+Main code with classes for airplane and airport agents and to run the realizations
 
 ### weather_delay.py
 Code for delay caused by weather types
