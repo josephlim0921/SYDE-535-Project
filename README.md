@@ -10,7 +10,7 @@ Using agent-based simulation, we model airline delay at Canada's three busiest a
 
 
 
- We look at 3 main scenarios and 6 ablations for the project: 
+ We look at 3 main ablations and 6 scenarios for the project: 
  
 * The **1. Baseline scenario**, which simulates current procedures.
 * **2. Operation Management Scenarios**: which simulate scenarios which improve airport organization and  do not involve infrastructure investment.
@@ -37,34 +37,30 @@ Using agent-based simulation, we model airline delay at Canada's three busiest a
   *  **scenario_1,scenario_2,scenario_3,scenario_4,scenario_6** : Cumulative delay at each airport for each scenario respectively.
   *  **milestone2_simulation_results, milestone2_simulation_results_scenario1** : Preliminary results, please ignore.
 
+
+
   
   *  **final_presentation.pdf** : 15 minute presentation summarizing our main findings.
   *  **final_report.pdf** : 31 page report summarizing simiulation conceptualization, and our findings. 
-  *  **images** :Sample images for illustration.
+  *  **images** : Sample images for illustration.
+  
+  
+
+  
+  *  **flight_times.csv** : Flight times between various destinations.
+  *  **ground_delay.py** : Code for delay caused by ground services.
+  *  **max_capabilities.py** : Capacities of airline flights and percentage of each aircraft
+  *  **weather_delay.py** : Code for delay caused by weather types.
+
+  *  **max_capacity - YUL_capacity.csv** : Hourly passenger variation for YUL airport
+  *  **max_capacity - YVR_capacity.csv** : Hourly passenger variation for YVR airport
+  *  **max_capacity - YYZ_capacity.csv** : Hourly passenger variation for YYZ airport.
+  
+  *  **pseudo_code.txt** : Pseudocode for simulation implementation
+  *  **simulation.ipynb, simulation_final.ipynb, simulation_updated.ipynb** : Preliminary code, please ignore.
+  *  **simulation_final_fixed.ipynb** : Main code with classes for airplane and airport agents and to run the realizations.
 
 
-### flight_times.csv
-Flight times between various destinations
 
-### ground_delay.py
-Code for delay caused by ground services
-
-### max_capabilities.py
-Capacities of airline flights and percentage of each aircraft
-
-### max_capacity - YUL_capacity.csv
-Hourly passenger variation for YUL airport
-
-### max_capacity - YVR_capacity.csv
-Hourly passenger variation for YVR airport
-
-### max_capacity - YYZ_capacity.csv
-Hourly passenger variation for YYZ airport
-
-### simulation_final_fixed.ipynb
-Main code with classes for airplane and airport agents and to run the realizations
-
-### weather_delay.py
-Code for delay caused by weather types
 
 
