@@ -5,19 +5,19 @@
 </p>
 
 
-Using agent-based simulation, we model airline delay at Canada's three busiest airports (Montreal [YUL], Toronto [YYZ] and Vancouver[YVR). We examine the impacts of delay arising from 4 major sources
- Weather, Maintenance, Ground procedures, Congestion, and cascading delays. Our metric for quantifying delay was Cumulative Passenger-delay minutes across the 3 major airports, representing the Cumulative time lost due to the delays. We have two main agents, the airport agent and the airplane agent, each with specfic attributes and behaviours. For example, airplace agents record attributes such as  status, origin, destination, and behaviours such as identifying maintanance, "circle" at airport and simulation flight times. 
+Using agent-based simulation, we model airline delay at Canada's three busiest airports (Montreal [YUL], Toronto [YYZ] and Vancouver[YVR). We examine the impacts of delay arising from 5 major sources:
+**Weather, Maintenance, Ground procedures, Congestion,** and **Cascading delays**. Our metric for quantifying delay was the Cumulative Passenger-delay minutes across the 3 major airports, representing the Cumulative time lost for passengers due to the delays. We have two main types of agents, the airport agent and the airplane agent, each of which has specfic attributes and behaviours. For example, airplace agents record **attributes** such as status, origin, destination, and **behaviours** such as identifying maintanance, "circling" at airport and simulated flight times. 
 
 
  We look at 3 main scenarios and 5 ablations for the project: 
-     1. **Baseline scenario**, which simulated current procedures
-     2. **Operation Management Scenarios** : 
-         2.1    **Implementing Traffic management forecasting**:
-         2.2     **Ground Delay Program**:
-     3.  **Capital Investment Scenarios**:
-         * **Increasing bridging (gate) capacity at the airport**
-         * **Expanding the runways and number of control operators**
-         * **Improving build quality of aircraft** : 
+     * The **1. Baseline scenario**, which simulates current procedures
+     * **2. Operation Management Scenarios**: which simulate scenarios which improve airport organization and  do not involve infrastructure investment
+         *     **2.1 Implementing traffic management forecasting**: This helps forecast future demand in advance to plan staffing and equipment needs 
+         *     **2.2 Ground Delay Program**: grounds planes at an origin airport when an adverse event occurs 
+     *  **3. Capital Investment Scenarios**: which simulate scenarios where high levels ofinfrastructure investment/ugrades occur
+         * **3.1 Increasing bridging (gate) capacity at the airport**, this helps to incrase overall airport capacity
+         * **3.2 Expanding the runways and number of control operators**, this is another way to uncrease airport capacity
+         * **3.3 Improving build quality of aircraft** : a hyptheical scenario where the reliability of planes improves, resulting in fewer maintanance needs
 
 # Images
 
